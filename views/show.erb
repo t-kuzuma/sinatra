@@ -1,0 +1,14 @@
+<h2 class="show"><%= CGI.escapeHTML(@memo["title"]) %></h2>
+<p class="show"><%= CGI.escapeHTML(@memo["content"]) %></p>
+
+<div class="form">
+  <form action="/memos/<%= params[:id] %>/edit" method="get">
+    <input type="hidden" name="_method" value="delete">
+    <input type="submit" value="編集" class="button">
+  </form>
+
+  <form action="/memos/<%= params[:id] %>" method="post">
+    <input type="hidden" name="_method" value="delete">
+    <input type="submit" value="削除" class="button">
+  </form>
+</div>

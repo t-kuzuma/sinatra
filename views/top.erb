@@ -1,0 +1,9 @@
+<form action="/memos/new" method="get">
+  <input type="submit" value="追加" class="button">
+</form>
+
+<ul>
+  <% @memos.each do |key, memo| %>
+    <li><a href="/memos/<%= key %>" class="top-title"><%= CGI.escapeHTML(memo["title"]) %></a></li>
+  <% end %>
+</ul>
