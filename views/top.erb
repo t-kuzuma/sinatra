@@ -3,7 +3,7 @@
 </form>
 
 <ul>
-  <% @memos.each do |key, memo| %>
-    <li><a href="/memos/<%= key %>" class="top-title"><%= CGI.escapeHTML(memo["title"]) %></a></li>
+  <% @memos.each do |memo| %>
+    <li><a href="/memos/<%= memo["id"] %>" class="top-title"><%= CGI.escapeHTML(memo["title"]) %></a></li>
   <% end %>
 </ul>

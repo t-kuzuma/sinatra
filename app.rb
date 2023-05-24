@@ -3,25 +3,41 @@
 require 'sinatra'
 require 'sinatra/contrib'
 require 'sinatra/reloader'
-require 'json'
+require 'pg'
 require 'cgi'
+require 'bundler/setup'
 
-FILE_PATH = 'public/memos.json'
-
-def get_memos_data(file_path)
-  File.open(file_path, 'r') do |file|
-    JSON.parse(file.read)
-  end
+def conn
+  @conn ||= PG.connect(dbname: 'postgres')
 end
 
-def set_memos_data(file_path, memos)
-  File.open(file_path, 'w') do |file|
-    file.write(JSON.generate(memos))
-  end
+configure do
+  conn.exec('CREATE TABLE IF NOT EXISTS memos (id serial, title varchar(255), content text)')
+end
+
+def read_memos
+  conn.exec('SELECT * FROM memos')
+end
+
+def read_memo(id)
+  result = conn.exec_params('SELECT * FROM memos WHERE id = $1;', [id])
+  result.first
+end
+
+def post_memos(memos)
+  conn.exec_params('INSERT INTO memos(title, content) VALUES ($1, $2)', [memos['title'], memos['content']])
+end
+
+def edit_memos(memos)
+  conn.exec_params('UPDATE memos SET title = $1, content = $2 WHERE id = $3;', [memos['title'], memos['content'], memos['id']])
+end
+
+def delete_memos(id)
+  conn.exec_params('DELETE FROM memos WHERE id = $1;', [id])
 end
 
 get '/memos' do
-  @memos = get_memos_data(FILE_PATH)
+  @memos = read_memos
   erb :top
 end
 
@@ -30,40 +46,35 @@ get '/memos/new' do
 end
 
 get '/memos/:id' do
-  memos = get_memos_data(FILE_PATH)
-  @memo = memos[params[:id]]
+  @memo = read_memo(params[:id])
   erb :show
 end
 
 post '/memos' do
-  memos = get_memos_data(FILE_PATH)
-  new_memos_id = memos.keys.map(&:to_i).max + 1
-  memos[new_memos_id.to_s] = {
+  memos = {
     'title' => params[:title],
     'content' => params[:content]
   }
-  set_memos_data(FILE_PATH, memos)
+  post_memos(memos)
   redirect '/memos'
 end
 
 get '/memos/:id/edit' do
-  @memos = get_memos_data(FILE_PATH)
+  @memo = read_memo(params[:id])
   erb :edit
 end
 
 patch '/memos/:id' do
-  memos = get_memos_data(FILE_PATH)
-  memos[params[:id]] = {
+  memos = {
+    'id' => params[:id],
     'title' => params[:title],
     'content' => params[:content]
   }
-  set_memos_data(FILE_PATH, memos)
+  edit_memos(memos)
   redirect '/memos'
 end
 
 delete '/memos/:id' do
-  memos = get_memos_data(FILE_PATH)
-  memos.delete(params[:id])
-  set_memos_data(FILE_PATH, memos)
+  delete_memos(params[:id])
   redirect '/memos'
 end
