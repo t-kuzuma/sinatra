@@ -2,11 +2,11 @@
   <input type="hidden" name="_method" value="patch">
   <div class="form-input">
     <label for="title">タイトル</label>
-    <input type="text" id="title" name="title" value="<%= @memos[params[:id]]["title"] %>">
+    <input type="text" id="title" name="title" value="<%= CGI.escapeHTML(@memos[params[:id]]['title']) %>">
   </div>
   <div class="form-input">
     <label for="content">内容</label>
-    <textarea id="content" name="content"><%= @memos[params[:id]]["content"] %></textarea>
+    <textarea id="content" name="content"><%= CGI.escapeHTML(@memos[params[:id]]["content"]) %></textarea>
   </div>
   <input type="submit" value="変更" class="button">
 </form>
