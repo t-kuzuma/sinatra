@@ -20,7 +20,7 @@ def read_memos
 end
 
 def read_memo(id)
-  result = conn.exec_params('SELECT * FROM memos WHERE id = $1;' LIMIT 1, [id])
+  result = conn.exec_params('SELECT * FROM memos WHERE id = $1 LIMIT 1;', [id])
   result.first
 end
 
@@ -34,6 +34,10 @@ end
 
 def delete_memos(id)
   conn.exec_params('DELETE FROM memos WHERE id = $1;', [id])
+end
+
+get '/' do
+  redirect '/memos'
 end
 
 get '/memos' do
