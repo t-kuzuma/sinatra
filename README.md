@@ -5,7 +5,7 @@ Sinatraを使ったシンプルなメモアプリです。
 以下の手順でセットアップできます。
 1. リポジトリをクローンします
 ```
-
+git clone https://github.com/t-kuzuma/sinatra.git
 ```
 2. ディレクトリに移動します
 ```
