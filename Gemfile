@@ -9,6 +9,7 @@ group :development do
 end
 
 gem 'erb_lint', require: false
+gem 'pg'
 gem 'puma'
 gem 'redcarpet'
 gem 'sinatra'
